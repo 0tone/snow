@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>雪景</title>
+	<style>
+		body{
+			margin:0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="snowCanvas">
+	</canvas>
+</body>
+<script>
+
+	var snow=function(){
+		var canvas=document.getElementById('snowCanvas');
+		var cvs=canvas.getContext('2d');
+
+		var snowTable=[];
+
+		function getSnow(direction){
+			var x=Math.random()*canvas.width;
+			var y=0;
+			var vy=Math.random()*5+0.2;
+			var size=Math.random()*3+0.2;
+			var zIndex=round(Math.random());
+			var vx;
+			if (direction=='left') {
+				vx=-Math.random()*3+0.2;
+			}
+			else if(direction=='right'){
+				vx=Math.random()*3+0.2;
+			}
+			else{
+				vx=0;
+			}
+
+			snowTable.push({
+				x:x,
+				y:y,
+				vx:vx,
+				vy:vy,
+				size:size,
+				zIndex:zIndex
+			});
+		}
+
+	    function resize(){
+	        canvas.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	        canvas.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	    }
+
+		function snowAnimate(){
+			cvs.clearRect(0,0,canvas.width, canvas.height);
+			cvs.fillStyle='#a6a75a';
+			cvs.strokeStyle='#a6a75a';
+			snowTable.forEach(function(snow){
+				snow.x+=snow.vx;
+				snow.y+=snow.vy;
+				cvs.beginPath();
+
+				if (snow.zIndex) {
+
+				}
+
+				cvs.arc(snow.x,snow.y,snow.size,0,2*Math.PI);
+				cvs.fill();
+				cvs.stroke();
+			});
+			requestAnimationFrame(snowAnimate);
+		}
+
+		var requestAnimationFrame =(function () {
+	        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+	                    window.setTimeout(callback, 1000 / 60);
+	                };
+	    })();
+
+
+	    resize();
+	    window.onresize = resize;
+	    setInterval(getSnow(), 10);
+	    //getSnow();
+	    snowAnimate();
+
+
+
+
+	}();
+</script>
+</html>
