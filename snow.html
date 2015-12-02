@@ -7,6 +7,7 @@
 		body{
 			margin:0;
 			overflow: hidden;
+			background-color: #666;
 		}
 	</style>
 </head>
@@ -16,19 +17,20 @@
 </body>
 <script>
 
-	var snow=function(){
+	var snow=function(direction,scale){//direction 雪的方向 可选 middle,left,right 默认middle，scale雪的规模 small,mediumn,big,默认为small
 		var canvas=document.getElementById('snowCanvas');
 		var cvs=canvas.getContext('2d');
-
 		var snowTable=[];
-
-		function getSnow(direction){
+		//获取雪 初始化坐标,方向，以及雪的层次
+		function getSnow(){
 			var x=Math.random()*canvas.width;
 			var y=0;
-			var vy=Math.random()*5+0.2;
-			var size=Math.random()*3+0.2;
-			var zIndex=round(Math.random());
+
+			var size=Math.random()*6+0.2;
+			//zIndex表示雪的远近程度，1更近，模糊程度小（速度稍微大一点），0模糊程度大(速度稍微慢一点)
+			var zIndex=Math.floor(Math.random()*3);
 			var vx;
+			var vy=Math.random()*2.5;
 			if (direction=='left') {
 				vx=-Math.random()*3+0.2;
 			}
@@ -38,6 +40,14 @@
 			else{
 				vx=0;
 			}
+
+			if (zIndex==0) {
+				vy+=0.5;
+			}
+			else if(zIndex==1){
+				vy+=1;
+			}
+
 
 			snowTable.push({
 				x:x,
@@ -49,27 +59,32 @@
 			});
 		}
 
+		//初始化 canvas大小 全屏
 	    function resize(){
 	        canvas.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 	        canvas.height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 	    }
 
+	    //雪的动画效果
 		function snowAnimate(){
 			cvs.clearRect(0,0,canvas.width, canvas.height);
-			cvs.fillStyle='#a6a75a';
-			cvs.strokeStyle='#a6a75a';
+			cvs.fillStyle='white';
 			snowTable.forEach(function(snow){
 				snow.x+=snow.vx;
 				snow.y+=snow.vy;
 				cvs.beginPath();
-
-				if (snow.zIndex) {
-
+				if (snow.zIndex==3) {//清晰
+					cvs.globalAlpha=1;
 				}
-
+				else if(snow.zIndex==2){
+					cvs.globalAlpha=0.7;
+				}
+				else{
+					cvs.globalAlpha=0.4;
+				}
 				cvs.arc(snow.x,snow.y,snow.size,0,2*Math.PI);
+
 				cvs.fill();
-				cvs.stroke();
 			});
 			requestAnimationFrame(snowAnimate);
 		}
@@ -79,17 +94,19 @@
 	                    window.setTimeout(callback, 1000 / 60);
 	                };
 	    })();
-
-
 	    resize();
 	    window.onresize = resize;
-	    setInterval(getSnow(), 10);
+		var time=70;
+		if(scale=='mediumn'){
+			time=40;
+		}
+		else if(scale=='big'){
+			time=10;
+		}
+		setInterval(getSnow, time);
 	    //getSnow();
 	    snowAnimate();
-
-
-
-
-	}();
+	};
+	snow('middle','midumn');
 </script>
 </html>
